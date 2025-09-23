@@ -91,6 +91,30 @@ module.exports = {
         ]
       },
     ],
+    // Add the SEO plugin here
+    [
+      'vuepress-plugin-seo',
+      {
+        siteTitle: (_, $site) => $site.title,
+        title: $page => $page.title,
+        description: $page => $page.frontmatter.description || $page.excerpt,
+        author: (_, $site) => $site.themeConfig.author || 'Payjoin Dev Kit',
+        tags: $page => $page.frontmatter.tags,
+        twitterCard: _ => 'summary_large_image',
+        type: $page => ['_blog', 'blog'].some(folder => $page.regularPath.startsWith('/' + folder)) ? 'article' : 'website',
+        url: (_, $site, path) => ($site.themeConfig.domain || 'https://payjoindevkit.org') + path,
+        image: ($page, $site) => {
+          // Check if page has a custom image
+          if ($page.frontmatter.image) {
+            return ($site.themeConfig.domain || 'https://payjoindevkit.org') + $page.frontmatter.image
+          }
+          // Use default card image
+          return ($site.themeConfig.domain || 'https://payjoindevkit.org') + '/card.png'
+        },
+        publishedAt: $page => $page.frontmatter.date && new Date($page.frontmatter.date),
+        modifiedAt: $page => $page.lastUpdated && new Date($page.lastUpdated),
+      }
+    ]
   ],
   themeConfig: {
     domain: baseUrl,
